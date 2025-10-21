@@ -1,0 +1,25 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Home vs Away Wins (AFL)",
+  "width": 200,
+  "height": 200,
+  "data": { "url": "games_with_states.csv" },
+
+  "transform": [
+    { "filter": "isValid(datum.HomeTeamScore) && isValid(datum.AwayTeamScore)" },
+    { "calculate": "toNumber(datum.HomeTeamScore)", "as": "home_pts" },
+    { "calculate": "toNumber(datum.AwayTeamScore)", "as": "away_pts" },
+    { "filter": "isFinite(datum.home_pts) && isFinite(datum.away_pts)" },
+    { "calculate": "datum.home_pts > datum.away_pts ? 'Home win' : 'Away win'", "as": "result" }
+  ],
+
+  "mark": { "type": "arc", "innerRadius": 60 },
+  "encoding": {
+    "theta": { "aggregate": "count", "title": "Games" },
+    "color": { "field": "result", "type": "nominal", "title": "Result" },
+    "tooltip": [
+      { "field": "result", "title": "Result" },
+      { "aggregate": "count", "title": "Games" }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "Score Margin per Game by State",
+  "width": 400, "height": 200,
+  "data": { "url": "games_with_states.csv" },
+  "transform": [
+    { "filter": "datum.state_full && datum.state_full != 'Unknown'" },
+    { "filter": "isValid(datum.HomeTeamScore) && isValid(datum.AwayTeamScore)" },
+    { "calculate": "toNumber(datum.HomeTeamScore)", "as": "home_pts" },
+    { "calculate": "toNumber(datum.AwayTeamScore)", "as": "away_pts" },
+    { "filter": "isFinite(datum.home_pts) && isFinite(datum.away_pts)" },
+    { "calculate": "datum.home_pts - datum.away_pts", "as": "score_margin" },
+    { "calculate": "(random()-0.5)*8", "as": "jitter" }   
+  ],
+  "layer": [
+    {
+      "mark": { "type": "circle", "opacity": 0.5 },
+      "encoding": {
+        "x": { "field": "score_margin", "type": "quantitative", "title": "Score margin (Home - Away)" },
+        "y": { "field": "state_full", "type": "nominal", "title": "State" },
+        "yOffset": { "field": "jitter", "type": "quantitative" },
+        "color": {
+          "field": "score_margin",
+          "type": "quantitative",
+          "title": "Margin",
+          "scale": { "scheme": "redblue", "domain": [-180, 180] }
+        },
+        "tooltip": [
+          { "field": "state_full", "title": "State" },
+          { "field": "score_margin", "title": "Margin" },
+          { "field": "home_pts", "title": "Home" },
+          { "field": "away_pts", "title": "Away" }
+        ],
+        "size": { "value": 50 }
+      }
+    },
+    {
+      "mark": { "type": "rule", "color": "#888", "strokeDash": [4,4] },
+      "encoding": { "x": { "datum": 0 } }
+    }
+  ]
+}

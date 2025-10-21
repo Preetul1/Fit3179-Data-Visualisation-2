@@ -1,0 +1,42 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "AFL Games by State (Total)",
+  "width": 800,
+  "height": 400,
+  "autosize": {"type": "fit", "contains": "padding"},
+  "padding": 0,
+  "view": {"stroke": null},
+  "projection": {"type": "mercator", "center": [134, -27],"scale": 500 },
+
+  "data": {
+    "url": "australia_states.topojson",
+    "format": {"type": "topojson", "feature": "ne_10m_admin_1_states_provinces"}
+  },
+
+  "transform": [
+    {
+      "lookup": "properties.state",
+      "from": {
+        "data": { "url": "games_by_state.csv" },
+        "key": "state_full",
+        "fields": ["games"]
+      }
+    },
+    { "calculate": "isValid(datum.games) ? datum.games : 0", "as": "Games" }
+  ],
+
+  "mark": {"type": "geoshape"},
+
+  "encoding": {
+    "color": {
+      "field": "Games",
+      "type": "quantitative",
+      "title": "Games",
+      "scale": {"type": "linear", "scheme": "blues"}
+    },
+    "tooltip": [
+      { "field": "properties.state", "type": "nominal", "title": "State" },
+      { "field": "Games", "type": "quantitative", "title": "Games (total)" }
+    ]
+  }
+}

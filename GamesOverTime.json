@@ -1,0 +1,55 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "AFL Games Over Time by State",
+  "width": 380,
+  "height": 200,
+  "data": { "url": "games_with_states.csv" },
+
+  "transform": [
+    { "filter": "datum.state_full && datum.state_full != 'Unknown'" },
+    { "filter": "isValid(datum.Year)" },
+    {
+      "aggregate": [
+        { "op": "count", "as": "games" }
+      ],
+      "groupby": ["Year", "state_full"]
+    },
+    { "calculate": "toNumber(datum.Year)", "as": "YearNum" },
+    {
+      "joinaggregate": [
+        { "op": "sum", "field": "games", "as": "year_total" }
+      ],
+      "groupby": ["YearNum"]
+    },
+    { "calculate": "datum.year_total > 0 ? datum.games / datum.year_total : 0", "as": "share" }
+  ],
+
+  "mark": { "type": "bar" },
+
+  "encoding": {
+    "x": {
+      "field": "YearNum",
+      "type": "ordinal",
+      "title": "Year",
+      "sort": "ascending"
+    },
+    "y": {
+      "field": "games",
+      "type": "quantitative",
+      "stack": "normalize",
+      "title": "Share of Games"
+    },
+    "color": {
+      "field": "state_full",
+      "type": "nominal",
+      "title": "State",
+      "legend": { "orient": "right" }
+    },
+    "tooltip": [
+      { "field": "YearNum", "type": "ordinal", "title": "Year" },
+      { "field": "state_full", "type": "nominal", "title": "State" },
+      { "field": "games", "type": "quantitative", "title": "Games" },
+      { "field": "share", "type": "quantitative", "title": "Share", "format": ".0%" }
+    ]
+  }
+}

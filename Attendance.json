@@ -1,0 +1,29 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": "AFL Attendance Over the Years",
+  "width": 380,
+  "height": 200,
+  "data": {
+    "url": "AFL_Attendance.csv"
+  },
+  "mark": {
+    "type": "line",
+    "point": true
+  },
+  "encoding": {
+    "x": {
+      "field": "Year",
+      "type": "temporal",
+      "title": "Year"
+    },
+    "y": {
+      "field": "Attendance",
+      "type": "quantitative",
+      "title": "Total Attendance"
+    },
+    "tooltip": [
+      { "field": "Year", "type": "temporal", "title": "Year" },
+      { "field": "Attendance", "type": "quantitative", "title": "Attendance" }
+    ]
+  }
+}
